@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
     public float jumpForce = 1f;
     public float rollForce = 50f;
+    public float health;
+    public float maxHealth = 100;
 
     public bool isOnGround;
     public bool isRunning = true;
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        health = maxHealth;
         invenDisplayer = GameObject.Find("Inventory Manager").GetComponent<InventoryDisplay>();
         invenManager = GameObject.Find("Inventory Manager").GetComponent<InventoryManager>();
         isOnGround = false;
@@ -88,7 +91,7 @@ public class PlayerController : MonoBehaviour
 
         checkForSwordHit();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1f);
 
         isAttacking = false;
         playerAnim.ResetTrigger("swordAttack");
@@ -271,6 +274,17 @@ public class PlayerController : MonoBehaviour
 
         isOnGround = true;
         playerAnim.ResetTrigger("land");
+    }
+
+    public void subHealth(int toSub)
+    {
+        health -= toSub;
+    }
+
+    public void addHealth(int toAdd)
+    {
+        health += toAdd;
+        Mathf.Clamp(health, 1f, maxHealth);
     }
 
     private void OnCollisionEnter(Collision collision)
