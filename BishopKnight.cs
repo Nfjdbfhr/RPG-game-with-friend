@@ -10,11 +10,14 @@ public class BishopKnight : MonoBehaviour
     public float attackReachDistance = 2f;
     public float noticeDistance = 10f;
     public float loseInterestDistance = 25f;
-    public float attackPower = 2f;
     public float moveSpeed = 2f;
+
+    public int attackPower = 2;
 
     public Transform player;
     public GameObject weapon;
+
+    public InventoryManager invenManager;
 
     public Animator anim;
 
@@ -157,7 +160,33 @@ public class BishopKnight : MonoBehaviour
     public IEnumerator checkForHit()
     {
         isAttacking = true;
-        yield return new WaitForSeconds(0.3f);
+        Vector3 rayOrigin = new Vector3(transform.position.x, transform.position.y + (transform.localScale.y / 2), transform.position.z);
+        Vector3 rayDirection = transform.forward;
+        float raycastDistance = attackReachDistance;
+
+        // Perform the raycast
+        RaycastHit hit;
+        if (Physics.Raycast(rayOrigin, rayDirection, out hit, raycastDistance))
+        {
+            if (hit.collider.gameObject.tag == "player")
+            {
+                PlayerController playerScript = hit.collider.gameObject.GetComponent<PlayerController>();
+
+                if (playerScript.health > 0)
+                {
+                    playerScript.subHealth(attackPower);
+                }
+                else
+                {
+                    Debug.Log("Missed Inside");
+                }
+            }
+            else
+            {
+                Debug.Log("Missed");
+            }
+        }
+        yield return new WaitForSeconds(1.5f);
         isAttacking = false;
     }
 
